@@ -1,6 +1,7 @@
 from sqlalchemy.exc import NoResultFound
 
 from ozz_backend import app_logger
+from ozz_backend.common.exception import ValueNotFoundEx
 from ozz_backend.database import entity
 from ozz_backend.database.conn import DBSession
 
@@ -15,3 +16,4 @@ class Mission(object):
             return mission_info
         except NoResultFound as e:
             app_logger.error(e)
+            raise ValueNotFoundEx('mission info not found')

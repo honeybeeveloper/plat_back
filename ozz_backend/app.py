@@ -1,9 +1,11 @@
 import uvicorn
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
-from ozz_backend import app_config
-from ozz_backend.api import persona
+from ozz_backend import app_config, app_logger
+from ozz_backend.api import material, mission
+from ozz_backend.common.exception import OzzException
 
 # FastAPI app
 app = FastAPI()
@@ -18,8 +20,16 @@ app.add_middleware(
 )
 
 # add api router
-app.include_router(persona.router)
+app.include_router(mission.router)
+app.include_router(material.router)
+
+
+# add exception manager
+@app.exception_handler(OzzException)
+async def exception_handler(request: Request, ex: OzzException):
+    app_logger.error(f'[{request.method}] {request.url}: {request.client.host}:{request.client.port}')
+    return JSONResponse(status_code=ex.status_code, content=ex.detail)
 
 
 if __name__ == '__main__':
-    uvicorn.run("app:app", host='127.0.0.1', port=8080, reload=app_config.app_reload)
+    uvicorn.run("app:app", host='127.0.0.1', port=5000, reload=app_config.app_reload)
