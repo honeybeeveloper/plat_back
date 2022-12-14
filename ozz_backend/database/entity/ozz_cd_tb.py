@@ -22,5 +22,3 @@ class OzzCdTb(Base):
     cd_name = Column(String)
     created_at = Column(DateTime, server_default=func.now())
     modified_at = Column(DateTime, onupdate=func.now())
-
-    # PrimaryKeyConstraint('cd_id', 'cd_type', name='ozz_cd_tb_pk')

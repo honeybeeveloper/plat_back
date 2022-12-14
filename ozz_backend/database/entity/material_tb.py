@@ -1,4 +1,3 @@
-from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import (
     Column,
     PrimaryKeyConstraint,
@@ -25,7 +24,3 @@ class MaterialTB(Base):
     material_detail_id = Column(Integer)
     created_at = Column(DateTime, server_default=func.now())
     modified_at = Column(DateTime, onupdate=func.now())
-
-    # material_bridge_tb_relation = relationship('MaterialBridgeTb',
-    #                                            back_populates='material_tb',
-    #                                            cascade='all, delete')
