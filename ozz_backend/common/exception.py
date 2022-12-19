@@ -17,3 +17,19 @@ class ValueNotFoundEx(NotFoundEx):
     def __init__(self, error_message):
         status_code = 400
         super().__init__(status_code, error_message)
+
+
+class DatabaseEx(OzzException):
+    pass
+
+
+class FailToInsertion(DatabaseEx):
+    def __init__(self, error_message):
+        status_code = 400
+        super().__init__(status_code, error_message)
+
+
+class FailToUpdate(DatabaseEx):
+    def __init__(self, error_message):
+        status_code = 400
+        super().__init__(status_code, error_message)
