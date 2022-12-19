@@ -13,7 +13,7 @@ from sqlalchemy.sql.functions import func
 from ozz_backend.database.entity.base import Base
 
 
-class MaterialBridgeTb(Base):
+class MaterialBridgeTB(Base):
     __tablename__ = 'material_bridge_tb'
 
     id = Column(Integer, Sequence('material_bridge_tb'), primary_key=True)

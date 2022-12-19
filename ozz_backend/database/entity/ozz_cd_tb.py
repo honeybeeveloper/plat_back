@@ -11,7 +11,7 @@ from sqlalchemy.sql.functions import func
 from ozz_backend.database.entity.base import Base
 
 
-class OzzCdTb(Base):
+class OzzCdTB(Base):
     __tablename__ = 'ozz_cd_tb'
     __table_args__ = (
         PrimaryKeyConstraint('cd_id', 'cd_type', name='ozz_cd_tb_pk'),
