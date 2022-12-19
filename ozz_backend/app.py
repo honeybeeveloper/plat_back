@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from ozz_backend import app_config, app_logger
-from ozz_backend.api import material, mission, quest
+from ozz_backend.api import material, mission, quest, user
 from ozz_backend.common.exception import OzzException
 
 # FastAPI app
@@ -23,6 +23,7 @@ app.add_middleware(
 app.include_router(mission.router)
 app.include_router(material.router)
 app.include_router(quest.router)
+app.include_router(user.router)
 
 
 # add exception manager
