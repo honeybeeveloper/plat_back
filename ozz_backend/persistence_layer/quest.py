@@ -6,7 +6,7 @@ from ozz_backend.database.conn import DBSession
 
 class Quest(object):
     @staticmethod
-    def get_quest_with_mission_id(mission_id):
+    def get_quests_with_mission_id(mission_id):
         # query-1
         # select
         #     qt.id, qt.quest_name, qt.description, qt.thumbnail_path,
@@ -34,15 +34,19 @@ class Quest(object):
                                entity.QuestTB.quest_name,
                                entity.QuestTB.description,
                                entity.QuestTB.thumbnail_path,
-                               entity.QuestBridgeTb.quest_cd,
-                               entity.QuestBridgeTb.quest_order,
-                               entity.QuestBridgeTb.link_quest_id) \
-            .join(entity.QuestBridgeTb, entity.QuestTB.id == entity.QuestBridgeTb.quest_id)\
-            .filter(entity.QuestBridgeTb.mission_id == mission_id).subquery()
+                               entity.QuestBridgeTB.quest_cd,
+                               entity.QuestBridgeTB.quest_order,
+                               entity.QuestBridgeTB.link_quest_id) \
+            .join(entity.QuestBridgeTB, entity.QuestTB.id == entity.QuestBridgeTB.quest_id)\
+            .filter(entity.QuestBridgeTB.mission_id == mission_id).subquery()
         sub_query = aliased(stmt, name='sub_query')
 
         return DBSession.query(sub_query.c.id, sub_query.c.quest_name, sub_query.c.description,
                                sub_query.c.thumbnail_path, sub_query.c.quest_cd, sub_query.c.quest_order,
-                               sub_query.c.link_quest_id, entity.QuestBridgeTb.quest_cd.label('link_quest_cd'))\
-            .outerjoin(entity.QuestBridgeTb, sub_query.c.link_quest_id == entity.QuestBridgeTb.id)\
+                               sub_query.c.link_quest_id, entity.QuestBridgeTB.quest_cd.label('link_quest_cd'))\
+            .outerjoin(entity.QuestBridgeTB, sub_query.c.link_quest_id == entity.QuestBridgeTB.id)\
             .order_by(sub_query.c.quest_order).all()
+
+    @staticmethod
+    def get_mission_quest():
+        pass
