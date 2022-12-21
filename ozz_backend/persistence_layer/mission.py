@@ -30,23 +30,25 @@ class Mission(object):
             raise FailToInsertion('fail to insert into user_ongoing_proto_tb')
 
     @staticmethod
-    def add_user_mission_log(user_id, mission_id, status):
+    def add_user_mission_log(data):
         try:
-            DBSession.add(entity.UserMissionLogTB(user_id=user_id,
-                                                  mission_id=mission_id,
-                                                  status=status))
+            DBSession.add(entity.UserMissionLogTB(user_id=data.user_id,
+                                                  mission_id=data.mission_id,
+                                                  status=data.status))
             DBSession.commit()
         except SQLAlchemyError as e:
             app_logger.error(e)
             raise FailToInsertion('fail to insert into user_mission_log_tb')
 
     @staticmethod
-    def update_user_mission_log(user_id, mission_id, status):
+    def update_user_mission_log(data):
         try:
             DBSession.query(entity.UserMissionLogTB)\
-                .filter(entity.UserMissionLogTB.user_id == user_id)\
-                .filter(entity.UserMissionLogTB.mission_id == mission_id)\
-                .update({'status': status})
+                .filter(entity.UserMissionLogTB.user_id == data.user_id)\
+                .filter(entity.UserMissionLogTB.mission_id == data.mission_id)\
+                .update({'status': data.status})
+
+            DBSession.commit()
         except SQLAlchemyError as e:
             app_logger.error(e)
             raise FailToUpdate('fail to update user_mission_log_tb')
