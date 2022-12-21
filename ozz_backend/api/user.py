@@ -13,11 +13,6 @@ router = APIRouter(
 )
 
 
-class UserIn(BaseModel):
-    id: int
-    mission_id: int
-
-
 class UserOngoingOut(BaseModel):
     user_id: str
     mission_id: int
