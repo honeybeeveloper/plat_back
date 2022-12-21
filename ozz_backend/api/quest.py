@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from starlette.requests import Request
 
 from ozz_backend import app_logger
-from ozz_backend.persistence_layer import Quest
+from ozz_backend.persistence_layer import Quest, User
 
 
 router = APIRouter(
@@ -17,15 +17,11 @@ class MessageOut(BaseModel):
     message: str
 
 
-class QuestIn(BaseModel):
-    mission_id: str
-
-
 class QuestOut(BaseModel):
     id: int
-    quest_name: str
-    description: str
-    thumbnail_path: str
+    quest_name: str | None = None
+    description: str | None = None
+    thumbnail_path: str | None = None
     quest_cd: str
     quest_order: int
     link_quest_id: int | None = None
@@ -39,7 +35,10 @@ class QuestOutList(BaseModel):
 class UserQuest(BaseModel):
     user_id: int
     mission_id: int
-    status: str
+    quest_id: int
+    quest_order: int
+    status: str | None
+    is_last: bool | None
 
 
 @router.get('/test')
@@ -63,25 +62,33 @@ def get_quests(request: Request, mission_id: int):
     return {'quests': quests}
 
 
-# TODO : insert into user_quest_log_tb
-# when user start mission, add related data in user_mission_log_tb
-@router.post('/user-log', response_model=MessageOut)
-def add_user_mission_log(request: Request, ongoing_data: UserQuest):
+@router.get('/mission-quest-order')
+def get_quest(request: Request, mission_id: int, quest_order: int):
     app_logger.info(f'[{request.method}] {request.url}: {request.client.host}:{request.client.port}')
-    # Quest.add_user_mission_log(user_id=ongoing_data.user_id,
-    #                            mission_id=ongoing_data.mission_id,
-    #                            status=ongoing_data.status)
-    # return {'message': 'success to add'}
-    pass
+    result = Quest.get_quest_with_mission_id_quest_order(mission_id=mission_id, quest_order=quest_order)
+    return QuestOut(id=result.quest_id,
+                    quest_cd=result.quest_cd,
+                    quest_order=result.quest_order)
 
 
-# TODO : update user_quest_log_tb
-# when user finish the mission, update status
-@router.patch('/user-log', response_model=MessageOut)
-def update_user_mission_log(request: Request, ongoing_data: UserQuest):
+@router.post('/completion', response_model=UserQuest)
+def add_user_quest_log(request: Request, ongoing_data: UserQuest):
     app_logger.info(f'[{request.method}] {request.url}: {request.client.host}:{request.client.port}')
-    # Quest.update_user_mission_log(user_id=ongoing_data.user_id,
-    #                               mission_id=ongoing_data.mission_id,
-    #                               status=ongoing_data.status)
-    # return {'message': 'success to update'}
-    pass
+    # 1. update user_quest_log_tb
+    Quest.modify_user_quest_log(ongoing_data)
+
+    if not ongoing_data.is_last:
+        next_quest_order = ongoing_data.quest_order + 1
+        # 2. get next quest id
+        result = Quest.get_quest_with_mission_id_quest_order(mission_id=ongoing_data.mission_id,
+                                                             quest_order=next_quest_order)
+        ongoing_data.quest_id = result.quest_id
+        # 3. update user_ongoig_proto_tb
+        User.modify_user_ongoing_info(ongoing_data)
+        # 4. insert user_quest_log_tb (new data, status = 'O')
+        ongoing_data.status = 'O'
+        Quest.add_user_quest_log(ongoing_data)
+
+    return UserQuest(user_id=ongoing_data.user_id, mission_id=ongoing_data.mission_id,
+                     quest_id=ongoing_data.quest_id, quest_order=ongoing_data.quest_order,
+                     status=None, is_last=None)
