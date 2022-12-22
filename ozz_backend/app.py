@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from ozz_backend import app_config, app_logger
-from ozz_backend.api import material, mission
+from ozz_backend.api import material, mission, quest, user
 from ozz_backend.common.exception import OzzException
 
 # FastAPI app
@@ -13,7 +13,7 @@ app = FastAPI()
 # TODO : CORS 등록
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -22,6 +22,8 @@ app.add_middleware(
 # add api router
 app.include_router(mission.router)
 app.include_router(material.router)
+app.include_router(quest.router)
+app.include_router(user.router)
 
 
 # add exception manager

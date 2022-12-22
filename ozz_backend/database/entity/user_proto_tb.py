@@ -1,9 +1,11 @@
 from sqlalchemy.sql.schema import (
     Column,
     PrimaryKeyConstraint,
+    Sequence
 )
 from sqlalchemy.sql.sqltypes import (
     DateTime,
+    Integer,
     String,
 )
 from sqlalchemy.sql.functions import func
@@ -11,14 +13,13 @@ from sqlalchemy.sql.functions import func
 from ozz_backend.database.entity.base import Base
 
 
-class OzzCdTB(Base):
-    __tablename__ = 'ozz_cd_tb'
-    __table_args__ = (
-        PrimaryKeyConstraint('cd_id', 'cd_type', name='ozz_cd_tb_pk'),
-    )
+class UserProtoTB(Base):
+    __tablename__ = 'user_proto_tb'
 
-    cd_id = Column(String)
-    cd_type = Column(String)
-    cd_name = Column(String)
+    id = Column(Integer, Sequence('user_proto_tb_id_seq'), primary_key=True)
+    PrimaryKeyConstraint(name='user_proto_tb_pk')
+    user_id = Column(String)
+    user_password = Column(String)
+    user_name = Column(String)
     created_at = Column(DateTime, server_default=func.now())
     modified_at = Column(DateTime, onupdate=func.now())

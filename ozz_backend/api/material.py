@@ -13,10 +13,6 @@ router = APIRouter(
 )
 
 
-class MaterialIn(BaseModel):
-    mission_id: int
-
-
 class MaterialOut(BaseModel):
     id: int
     material_name: str

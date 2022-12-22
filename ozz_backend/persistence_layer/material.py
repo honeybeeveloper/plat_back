@@ -13,8 +13,8 @@ class Material(object):
                                entity.MaterialTB.material_name,
                                entity.MaterialTB.material_type,
                                entity.MaterialTB.thumbnail_path,
-                               entity.OzzCdTb.cd_name)\
-                .join(entity.MaterialBridgeTb, entity.MaterialTB.id == entity.MaterialBridgeTb.material_id)\
-                .join(entity.OzzCdTb, entity.MaterialTB.material_type == entity.OzzCdTb.cd_id)\
-                .filter(entity.MaterialBridgeTb.mission_id == mission_id)\
+                               entity.OzzCdTB.cd_name)\
+                .join(entity.MaterialBridgeTB, entity.MaterialTB.id == entity.MaterialBridgeTB.material_id)\
+                .join(entity.OzzCdTB, entity.MaterialTB.material_type == entity.OzzCdTB.cd_id)\
+                .filter(entity.MaterialBridgeTB.mission_id == mission_id)\
                 .all()
